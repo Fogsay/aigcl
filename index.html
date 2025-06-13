@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIGC Lab.</title>
+  <!-- Import Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Import Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- Configure Tailwind custom colors and fonts -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#9D4EDD', // Purple primary color, in line with Labubu's fantasy style
+            secondary: '#FF6B6B', // Secondary color for emphasis and interactive elements
+            dark: '#2A2A2A', // Dark text color
+          },
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <!-- Custom utility classes -->
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .typing-cursor {
+        border-right: 0.15em solid #FF6B6B;
+        animation: blink 0.7s infinite;
+      }
+      .text-shadow {
+        text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+      .animate-float {
+        animation: float 3s ease-in-out infinite;
+      }
+      .animate-fadeIn {
+        animation: fadeIn 1s ease-in-out forwards;
+      }
+    }
+    
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body class="font-inter bg-dark overflow-hidden h-screen">
+  <!-- Full-screen background video container -->
+  <div class="fixed inset-0 z-0">
+    <video autoplay muted loop playsinline class="absolute min-w-full min-h-full object-cover">
+      <source src="video.mp4" type="video/mp4">
+      <!-- Alternative background when video fails to load -->
+      <div class="absolute inset-0 bg-gradient-to-br from-primary/90 to-dark"></div>
+    </video>
+    <!-- Semi-transparent overlay on the video to enhance text readability -->
+    <div class="absolute inset-0 bg-gradient-to-br from-dark/60 via-primary/20 to-dark/80"></div>
+  </div>
+
+  <!-- Main content container -->
+  <div class="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-8">
+    <!-- Title container -->
+    <div class="text-center mb-8 animate-float">
+      <span id="typing-text-container" class="text-[clamp(2.5rem,8vw,8rem)] font-bold text-white text-shadow mb-4 inline-block">
+        <span id="typing-text"></span>
+        <span id="cursor" class="typing-cursor"></span>
+      </span>
+      <p class="text-[clamp(1rem,3vw,1.3rem)] text-white/80 max-w-2xl mx-auto mt-6">
+        <span class="opacity-0" id="subtext">Artificial Intelligence Generation Content Laboratory.</span>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // Typing effect implementation
+    document.addEventListener('DOMContentLoaded', () => {
+      const textElement = document.getElementById('typing-text');
+      const cursorElement = document.getElementById('cursor');
+      const subtextElement = document.getElementById('subtext');
+      const welcomeText = "WELCOME";
+      const mainText = "AIGCL.COM";
+
+      function typeText(text, callback) {
+        let index = 0;
+        function typeWriter() {
+          if (index < text.length) {
+            textElement.textContent += text.charAt(index);
+            index++;
+            setTimeout(typeWriter, 150); // Typing speed
+          } else {
+            if (callback) {
+              callback();
+            }
+          }
+        }
+        typeWriter();
+      }
+
+      function startLoop() {
+        textElement.textContent = '';
+        subtextElement.style.opacity = '0';
+        subtextElement.classList.remove('animate-fadeIn');
+
+        // 停顿 1 秒
+        setTimeout(() => {
+          typeText(welcomeText, () => {
+            setTimeout(() => {
+              textElement.textContent = '';
+              typeText(mainText, () => {
+                setTimeout(() => {
+                  // Show subtitle
+                  subtextElement.classList.add('animate-fadeIn');
+                  subtextElement.style.opacity = '1';
+                  subtextElement.style.transition = 'opacity 1s ease-in-out';
+
+                  setTimeout(startLoop, 10000); // Wait 10 seconds before starting the loop again
+                }, 1300);
+              });
+            }, 3000); // Wait 3 seconds after "WELCOME" is typed
+          });
+        }, 1500); // 停顿 1 秒
+      }
+
+      // Start the loop
+      startLoop();
+    });
+  </script>
+</body>
+</html>
